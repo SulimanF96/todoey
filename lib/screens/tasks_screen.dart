@@ -3,8 +3,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:todoey/main.dart';
 import 'package:todoey/models/task.dart';
+import 'package:todoey/providers/auth_provider.dart';
 import 'package:todoey/providers/tasks_provider.dart';
 import 'package:todoey/screens/add_task_screen.dart';
+import 'package:todoey/screens/auth_screen.dart';
 import 'package:todoey/widgets/tasks_list.dart';
 
 class TasksScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(backgroundColor: Colors.lightBlueAccent, onPressed: (){
         showModalBottomSheet(context: context, builder: (context) => AddTaskScreen());
@@ -31,14 +34,35 @@ class _TasksScreenState extends State<TasksScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children:  [
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 30.0,
-                child: Icon(
-                  Icons.list,
-                  size: 30.0,
-                  color: Colors.lightBlueAccent,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 30.0,
+                    child: Icon(
+                      Icons.list,
+                      size: 30.0,
+                      color: Colors.lightBlueAccent,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap:  Provider.of<AuthModel>(context).isAuthorized ? (){
+                       Provider.of<AuthModel>(context, listen: false).logout();
+                    } : ()  {
+                      showModalBottomSheet(context: context, builder: (context) => AuthScreen());
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 30.0,
+                      child: Icon(
+                        Provider.of<AuthModel>(context).isAuthorized ? Icons.logout: Icons.login,
+                        size: 30.0,
+                        color: Colors.lightBlueAccent,
+                      ),
+                    ),
+                  )
+                ],
               ),
               SizedBox(
                 height: 10.0,
